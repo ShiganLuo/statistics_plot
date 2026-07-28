@@ -2,11 +2,14 @@ from itertools import combinations
 from statannotations.Annotator import Annotator
 import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import pandas as pd
 from scipy.stats import mannwhitneyu
 import itertools
 import numpy as np
-from typing import Optional, List
+from typing import Optional, List, Tuple, Dict, Any
+import logging
+logger = logging.getLogger(__name__)
 
 def single_violin_plot(
     df: pd.DataFrame,
@@ -18,7 +21,7 @@ def single_violin_plot(
     order: Optional[List[str]] = None,
     sort_keys: bool = True,
     palette: str = "Set2",
-    figsize: tuple = (6, 6),
+    figsize: Tuple[int, int] = (6, 6),
     violin_alpha: float = 0.85,
     point_size: float = 2,
     show_median: bool = False,
@@ -52,7 +55,7 @@ def single_violin_plot(
         Sort categories alphabetically when ``order`` is ``None``.
     palette : str, optional
         Seaborn / matplotlib colormap name.
-    figsize : tuple, optional
+    figsize : Tuple[int, int], optional
         Figure size in inches.
     violin_alpha : float, optional
         Fill transparency of violin bodies.
@@ -74,7 +77,9 @@ def single_violin_plot(
     """
     if value not in df.columns:
         raise ValueError(f"Value column not found: {value}")
-
+    if key is not None and key not in df.columns:
+        raise ValueError(f"Category column not found: {key}")
+    logger.info(f"Drawing violin plot for column: {value}")
     plt.rcParams["pdf.fonttype"] = 42
     plt.rcParams["ps.fonttype"] = 42
     sns.set_style("whitegrid")
@@ -210,7 +215,7 @@ def paired_violin_plot(
     ylabel: str = "Value",
     group_names: Optional[List[str]] = None,
     palette: Tuple[str, str] = ("#2166AC", "#B2182B"),
-    figsize: tuple = (7, 8),
+    figsize: Tuple[int, int] = (7, 8),
     violin_alpha: float = 0.25,
     violin_width: float = 0.7,
     point_size: float = 28,
@@ -486,7 +491,7 @@ def violin_plot_advanced(
     group_names: Optional[List[str]] = None,
     group_order: Optional[List[str]] = None,
     base_palette: str = "Set2",
-    figsize: tuple = (16, 8),
+    figsize: Tuple[int, int] = (16, 8),
 ):
     """
     Draw violin + strip plot.
@@ -970,7 +975,7 @@ def plot_comparison_with_violin(
 
     Parameters
     ----------
-    result : dict
+    result : Dict[str, Any]
         Result dictionary from prepare_data().
     title : str, optional
         Plot title.
@@ -978,9 +983,9 @@ def plot_comparison_with_violin(
         X-axis label.
     ylabel : str, optional
         Y-axis label.
-    figsize : tuple of int, optional
+    figsize : Tuple[int, int], optional
         Figure size.
-    palette : tuple of str, optional
+    palette : Tuple[str, str], optional
         Colors for the two groups.
     show_stats : bool, optional
         Whether to show statistics annotation.
@@ -1139,14 +1144,14 @@ def plot_comparison_with_violin(
 
 
 
-def violin_by_method_celltype_step(df_dict: dict, outplot: str):
+def violin_by_method_celltype_step(df_dict: Dict, outplot: str):
     all_dfs = []
     for method, df in df_dict.items():
         tmp = df.copy()
         tmp['Method'] = method
         all_dfs.append(tmp)
     combined_df = pd.concat(all_dfs, axis=0)
-
+    logger.info(f"Combined DataFrame shape: {combined_df.shape}")
     methods = combined_df['Method'].unique().tolist()
     cell_types = combined_df['Cell_type'].unique().tolist()
     palette = sns.color_palette("Set2", n_colors=len(cell_types))
