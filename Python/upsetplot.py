@@ -3,7 +3,7 @@ mammals = ["Cat", "Dog", "Horse", "Sheep", "Pig", "Cattle", "Rhinoceros", "Moose
 herbivores = ["Horse", "Sheep", "Cattle", "Moose", "Rhinoceros"]
 domesticated = ["Dog", "Chicken", "Horse", "Sheep", "Pig", "Cattle", "Duck"]
 (mammals, herbivores, domesticated)
-from Python.basic.upsetplot import from_contents,plot,UpSet
+from workflow.Omics.src.common.plot.Python.upsetplot import from_contents,plot,UpSet
 
 animals = from_contents(
     {"mammal": mammals, "herbivore": herbivores, "domesticated": domesticated}
