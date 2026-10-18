@@ -1,6 +1,8 @@
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib import font_manager
+from matplotlib.font_manager import FontProperties
 def configure_chinese_font() -> str:
     """Configure a CJK-capable font for matplotlib and return selected font name."""
     candidates = [
