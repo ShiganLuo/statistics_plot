@@ -1,6 +1,39 @@
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import seaborn as sns
+def configure_chinese_font() -> str:
+    """Configure a CJK-capable font for matplotlib and return selected font name."""
+    candidates = [
+        "Noto Sans CJK SC",
+        "Source Han Sans SC",
+        "WenQuanYi Micro Hei",
+        "Microsoft YaHei",
+        "SimHei",
+        "PingFang SC",
+        "Heiti SC",
+    ]
+    available_fonts = {f.name for f in font_manager.fontManager.ttflist}
+    selected = ""
+    for font_name in candidates:
+        if font_name in available_fonts:
+            selected = font_name
+            break
+
+    if selected:
+        plt.rcParams["font.sans-serif"] = [selected, "DejaVu Sans", "Arial Unicode MS"]
+    else:
+        plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "Arial Unicode MS"]
+
+    plt.rcParams["axes.unicode_minus"] = False
+    plt.rcParams["font.family"] = "sans-serif"
+    return selected
+
+def apply_font_after_style(selected_font: str) -> None:
+    """Re-apply font settings after sns.set_style() which resets rcParams."""
+    if selected_font:
+        plt.rcParams["font.sans-serif"] = [selected_font, "DejaVu Sans", "Arial Unicode MS"]
+        plt.rcParams["axes.unicode_minus"] = False
+        plt.rcParams["font.family"] = "sans-serif"
 def plot_comparison(
     result: Dict[str, Any],
     title: str = "Mapping Rate Comparison",
